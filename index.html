@@ -6,384 +6,398 @@
 <title>Civcraft — mechanics</title>
 <style>
   :root {
-    --paper: #f4f0e6;
-    --ink: #1b2430;
-    --muted: #5e6872;
-    --line: #d8d0c2;
-    --card: #fffdf8;
+    --paper: #f3efe4;
+    --ink: #1a2744;
+    --muted: #5c6b7c;
+    --line: #c9d3df;
+    --navy: #1b3a5c;
+    --sky: #e7f1fa;
     --elf: #1d4f86;
-    --elf-soft: #e6f0f8;
     --human: #8a4b22;
-    --human-soft: #f7eee6;
-    --open: #6b5428;
-    --open-soft: #f3ead4;
+    --gold: #c6a15a;
+    --card: #f8fbfe;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font: 18px/1.55 "Segoe UI", Candara, sans-serif;
+    font: 16px/1.4 "Segoe UI", Candara, sans-serif;
   }
-  a { color: inherit; }
-  header.mast {
-    padding: 48px 24px 28px;
-    border-bottom: 1px solid var(--line);
-    background:
-      linear-gradient(180deg, #efe8d8 0%, var(--paper) 100%);
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 64px; }
+  header { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 22px; }
+  .kicker { margin: 0 0 6px; letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+  h1 { margin: 0; font-family: Palatino, "Palatino Linotype", Georgia, serif; font-size: clamp(36px, 5vw, 56px); line-height: 0.92; font-weight: 600; }
+  header p { margin: 0; max-width: 280px; color: var(--muted); }
+  h2 { margin: 0 0 12px; font-family: Palatino, Georgia, serif; font-size: 28px; font-weight: 600; }
+  section { margin-top: 34px; }
+  .mark {
+    display: inline-block; margin: 0 0 8px; padding: 2px 8px; border-radius: 999px;
+    background: #f3ead4; color: #6b5428; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   }
-  .wrap { max-width: 1040px; margin: 0 auto; }
-  .kicker {
-    margin: 0 0 8px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-size: 12px;
-    color: var(--muted);
+  .poles, .tracks, .resources, .base, .flow, .pair, .ranks, .recover, .prove { display: grid; gap: 14px; }
+  .poles, .tracks, .pair { grid-template-columns: 1fr 1fr; }
+  .resources, .base { grid-template-columns: repeat(4, 1fr); }
+  .flow { grid-template-columns: repeat(6, 1fr); }
+  .ranks { grid-template-columns: 1.2fr 1fr 1fr; }
+  .recover, .prove { grid-template-columns: repeat(4, 1fr); }
+  .panel, .tile, .step, .choice, .rank, .beat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
   }
-  h1 {
-    margin: 0;
-    font-family: Palatino, "Palatino Linotype", Georgia, serif;
-    font-size: clamp(40px, 6vw, 64px);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 0.95;
+  .panel { padding: 0 0 14px; }
+  .panel header, .choice header { padding: 12px 14px 0; }
+  .panel h2, .choice h3, .tile strong, .step strong, .rank strong, .beat strong { display: block; }
+  .tile, .step, .rank, .beat { padding: 12px; }
+  .tile span, .step span, .rank span, .beat span, .fine { color: var(--muted); font-size: 14px; }
+  .scene { display: block; width: 100%; height: auto; background: var(--sky); }
+  .elf-head { background: var(--navy); color: white; }
+  .human-head { background: #6e3b1f; color: white; }
+  .sheet { border: 2px solid var(--navy); border-radius: 18px; padding: 14px; background: #f7fbfe; }
+  .sheet > .banner {
+    margin: -14px -14px 14px; padding: 12px 16px; background: var(--navy); color: white;
+    display: flex; justify-content: space-between; gap: 12px; align-items: center;
   }
-  .lede {
-    max-width: 42rem;
-    margin: 16px 0 0;
-    font-size: 20px;
-  }
-  .layout {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 36px;
-    padding: 32px 24px 80px;
-  }
-  nav.toc {
-    position: sticky;
-    top: 20px;
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 14px;
-  }
-  nav.toc a {
-    text-decoration: none;
-    color: var(--muted);
-    border-left: 2px solid transparent;
-    padding-left: 10px;
-  }
-  nav.toc a:hover { color: var(--ink); border-left-color: var(--ink); }
-  main section { margin: 0 0 48px; }
-  h2 {
-    margin: 0 0 12px;
-    font-family: Palatino, "Palatino Linotype", Georgia, serif;
-    font-size: 32px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  h3 {
-    margin: 0 0 8px;
-    font-family: Palatino, "Palatino Linotype", Georgia, serif;
-    font-size: 22px;
-  }
-  p { margin: 0 0 12px; }
-  .tag {
-    display: inline-block;
-    margin: 0 0 10px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    background: var(--open-soft);
-    color: var(--open);
-  }
-  .tag.set { background: #e5efe4; color: #24532a; }
-  .grid-2, .grid-4, .choices {
-    display: grid;
-    gap: 14px;
-  }
-  .grid-2 { grid-template-columns: 1fr 1fr; }
-  .grid-4 { grid-template-columns: repeat(4, 1fr); }
-  .card, .choice {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 16px 16px 14px;
-  }
-  .card strong, .choice h3 { display: block; }
-  .card span, .muted { color: var(--muted); }
-  ol.flow {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: 8px;
-  }
-  ol.flow li {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 12px 14px;
-  }
-  ol.flow b { font-family: Palatino, Georgia, serif; margin-right: 8px; }
-  .sheet {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 10px;
-    border: 1px solid var(--line);
-    margin: 0 0 12px;
-    background: white;
-  }
-  .choice.elf { background: var(--elf-soft); }
-  .choice.human { background: var(--human-soft); }
-  .choice ul { margin: 8px 0 0; padding-left: 18px; }
-  .identity {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--line);
-    font-size: 15px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    overflow: hidden;
-  }
-  th, td {
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-  }
-  th { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  tr:last-child td { border-bottom: 0; }
-  footer {
-    padding: 0 24px 40px;
-    color: var(--muted);
-    font-size: 14px;
-  }
+  .sheet > .banner h2 { margin: 0; color: white; font-size: 26px; }
+  .choice h3 { margin: 10px 14px 0; font-family: Palatino, Georgia, serif; font-size: 22px; }
+  .choice ul { margin: 8px 0 0; padding: 0 14px; list-style: none; display: grid; gap: 6px; }
+  .choice li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; font-size: 14px; }
+  .dot { width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; background: var(--navy); }
+  .human .dot { background: var(--human); }
+  .identity { margin: 12px; padding: 10px 12px; border-radius: 12px; background: #dceafa; font-size: 14px; }
+  .choice.human .identity { background: #f4e4d4; }
+  .identity b { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .step { text-align: center; position: relative; }
+  .step em { display: block; font-style: normal; font-family: Palatino, Georgia, serif; font-size: 20px; color: var(--navy); }
+  .note { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+  .house-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .elf-ages { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  .elf-ages b { background: var(--navy); color: white; border-radius: 999px; padding: 6px 12px; }
+  .elf-ages i { width: 10px; height: 10px; border-radius: 50%; background: #9bb4cc; display: block; }
+  .spikes { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 5px; }
+  .spikes li { display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: center; font-size: 13px; }
+  .spikes li::after { content: ""; height: 10px; width: var(--h); background: #6e3b1f; border-radius: 999px; }
+  svg.icon { width: 42px; height: 42px; display: block; margin-bottom: 8px; }
   @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; gap: 18px; }
-    nav.toc { position: static; flex-direction: row; flex-wrap: wrap; }
-    nav.toc a { border-left: 0; padding: 4px 8px; background: var(--card); border-radius: 999px; border: 1px solid var(--line); }
-    .grid-2, .grid-4, .choices { grid-template-columns: 1fr; }
+    header { display: block; }
+    header p { margin-top: 10px; }
+    .poles, .tracks, .pair, .ranks, .resources, .base, .flow, .recover, .prove { grid-template-columns: 1fr 1fr; }
+    .flow { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .resources, .base, .recover, .prove, .ranks, .pair, .poles, .tracks, .flow { grid-template-columns: 1fr; }
+    .sheet > .banner { flex-wrap: wrap; }
   }
 </style>
 </head>
 <body>
-<header class="mast">
-  <div class="wrap">
-    <p class="kicker">Civcraft</p>
-    <h1>How the war is fought</h1>
-    <p class="lede">A real-time strategy game in the spirit of Age of Empires. Elves fight with high magic. Humans fight with technology and nothing else. Both gather, build, and train until one side is gone.</p>
-  </div>
-</header>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="kicker">Civcraft</p>
+      <h1>How the war is fought</h1>
+    </div>
+    <p>Real-time strategy. Elves with high magic. Humans with technology only. Gather, build, and remove the other side.</p>
+  </header>
 
-<div class="wrap layout">
-  <nav class="toc" aria-label="Sections">
-    <a href="#premise">Premise</a>
-    <a href="#ages">Ages</a>
-    <a href="#economy">Economy</a>
-    <a href="#population">Population</a>
-    <a href="#base">First base</a>
-    <a href="#production">Production</a>
-    <a href="#elves">Elves</a>
-    <a href="#humans">Humans</a>
-    <a href="#veterancy">Veterancy</a>
-    <a href="#recovery">Field recovery</a>
-    <a href="#prototype">Prototype</a>
-  </nav>
+  <section>
+    <div class="poles">
+      <article class="panel">
+        <svg class="scene" viewBox="0 0 480 150" role="img" aria-label="Three elven soldiers under a star">
+          <rect width="480" height="150" fill="#e7f1fa"/>
+          <ellipse cx="240" cy="128" rx="190" ry="18" fill="#d5e4f2"/>
+          <g fill="#1b3a5c">
+            <polygon points="240,18 246,32 262,32 249,41 254,56 240,47 226,56 231,41 218,32 234,32"/>
+            <path d="M70 36 h26 v34 l-13 8 l-13-8 z"/>
+            <rect x="82" y="28" width="3" height="78"/>
+            <path d="M384 36 h26 v34 l-13 8 l-13-8 z"/>
+            <rect x="396" y="28" width="3" height="78"/>
+            <circle cx="168" cy="62" r="10"/>
+            <path d="M156 74 h24 l6 36 h-36 z"/>
+            <rect x="150" y="86" width="10" height="16" rx="2"/>
+            <rect x="188" y="58" width="3" height="52"/>
+            <circle cx="240" cy="58" r="11"/>
+            <path d="M226 72 h28 l8 40 h-44 z"/>
+            <rect x="218" y="84" width="12" height="18" rx="2"/>
+            <rect x="262" y="52" width="3" height="58"/>
+            <circle cx="312" cy="62" r="10"/>
+            <path d="M300 74 h24 l6 36 h-36 z"/>
+            <rect x="292" y="86" width="10" height="16" rx="2"/>
+            <rect x="332" y="58" width="3" height="52"/>
+          </g>
+        </svg>
+        <header><h2>Elves</h2></header>
+        <p class="fine" style="padding:0 14px">Fewer soldiers. They start medieval and strong. Later ages add less.</p>
+      </article>
+      <article class="panel">
+        <svg class="scene" viewBox="0 0 480 150" role="img" aria-label="A human fort with a rising row of works">
+          <rect width="480" height="150" fill="#f8efe6"/>
+          <ellipse cx="240" cy="132" rx="190" ry="16" fill="#f0e0d0"/>
+          <g fill="#6e3b1f">
+            <path fill-rule="evenodd" d="M70 126 V62 H96 V46 H140 V62 H196 V46 H240 V62 H266 V126 Z M150 126 V92 Q168 74 186 92 V126 Z"/>
+            <rect x="300" y="96" width="18" height="30"/>
+            <rect x="326" y="78" width="18" height="48"/>
+            <rect x="352" y="60" width="18" height="66"/>
+            <rect x="378" y="42" width="18" height="84"/>
+          </g>
+        </svg>
+        <header><h2>Humans</h2></header>
+        <p class="fine" style="padding:0 14px">No magic. More people. They start primitive and spike harder as the ages pass.</p>
+      </article>
+    </div>
+  </section>
 
-  <main>
-    <section id="premise">
-      <h2>Premise</h2>
-      <p>Two factions share the same map and the same basic jobs: gather resources, raise buildings, and field an army. They do not share a way of making power.</p>
-      <div class="grid-2">
-        <article class="card">
-          <strong>Elves</strong>
-          <span>High magic. Fewer soldiers, and the ones they have start strong. Later ages add less than they do for humans.</span>
-        </article>
-        <article class="card">
-          <strong>Humans</strong>
-          <span>Technology only. They begin with primitive troops, a larger population, and much steeper jumps in power as the ages pass.</span>
-        </article>
+  <section>
+    <h2>Ages</h2>
+    <div class="tracks">
+      <article class="tile">
+        <strong>Elves</strong>
+        <div class="elf-ages" aria-hidden="true">
+          <b>Medieval</b>
+          <i></i><i></i><i></i>
+        </div>
+        <span>A strong opening. The track after it is short.</span>
+      </article>
+      <article class="tile">
+        <strong>Humans</strong>
+        <ol class="spikes">
+          <li style="--h:16%"><span>Primitive</span></li>
+          <li style="--h:28%"><span>Antiquity</span></li>
+          <li style="--h:40%"><span>Middle Ages</span></li>
+          <li style="--h:52%"><span>Premodern</span></li>
+          <li style="--h:66%"><span>Modern</span></li>
+          <li style="--h:82%"><span>WWI</span></li>
+          <li style="--h:100%"><span>WWII</span></li>
+        </ol>
+        <span>Each later age is a larger jump.</span>
+      </article>
+    </div>
+    <p class="note">An age unlocks units, technologies, and new uses for units that already exist.</p>
+  </section>
+
+  <section>
+    <h2>Four resources</h2>
+    <div class="resources">
+      <article class="tile">
+        <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#e7f1fa"/><path d="M24 8 l10 14 h-6 l8 12 h-24 l8-12 h-6 z" fill="#1b3a5c"/><rect x="22" y="34" width="4" height="8" fill="#1b3a5c"/></svg>
+        <strong>Wood</strong><span>Trees on the map.</span>
+      </article>
+      <article class="tile">
+        <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#f8efe6"/><path d="M10 32 l8-16 l6 8 l4-10 l10 18 z" fill="#c6a15a"/><path d="M8 34 h32 v4 h-32 z" fill="#6e3b1f"/></svg>
+        <strong>Gold</strong><span>Surface deposits.</span>
+      </article>
+      <article class="tile">
+        <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#e7f1fa"/><circle cx="16" cy="20" r="5" fill="#1b3a5c"/><circle cx="26" cy="16" r="5" fill="#1b3a5c"/><circle cx="30" cy="26" r="5" fill="#1b3a5c"/><path d="M18 34 q8-10 16 0" fill="none" stroke="#1b3a5c" stroke-width="3"/></svg>
+        <strong>Food</strong><span>Berries, cattle, hunted animals.</span>
+      </article>
+      <article class="tile">
+        <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#f3ead4"/><path d="M8 34 L24 12 L40 34 Z" fill="#1b3a5c"/><path d="M20 34 v-8 h8 v8" fill="#f3ead4"/></svg>
+        <strong>Exotic</strong><span>Specialized mines.</span>
+      </article>
+    </div>
+    <p class="note">One worker type gathers all four.</p>
+  </section>
+
+  <section>
+    <h2>Population</h2>
+    <article class="tile">
+      <div class="house-row" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#e7f1fa"/><path d="M8 24 L24 10 L40 24 V40 H8 Z" fill="#1b3a5c"/><rect x="20" y="28" width="8" height="12" fill="#e7f1fa"/></svg>
+        <svg class="icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#e7f1fa"/><path d="M8 24 L24 10 L40 24 V40 H8 Z" fill="#1b3a5c"/><rect x="20" y="28" width="8" height="12" fill="#e7f1fa"/></svg>
+        <svg class="icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#e7f1fa"/><path d="M8 24 L24 10 L40 24 V40 H8 Z" fill="#1b3a5c"/><rect x="20" y="28" width="8" height="12" fill="#e7f1fa"/></svg>
       </div>
-    </section>
+      <strong>No fixed cap.</strong>
+      <span>Each house adds 10 room for workers and soldiers.</span>
+    </article>
+  </section>
 
-    <section id="ages">
-      <h2>Ages</h2>
-      <p>Both sides advance through ages. An age unlocks units, technologies, and new uses for units that already exist.</p>
-      <div class="grid-2">
-        <article class="card">
-          <strong>Elves</strong>
-          <span>They open in a strong medieval kit. Progress after that is real, but comparatively narrow.</span>
-        </article>
-        <article class="card">
-          <strong>Humans</strong>
-          <span>They climb from primitive tools through Antiquity, the Middle Ages, the premodern and modern eras, the First World War, and the Second World War. Their power spikes are the larger ones.</span>
-        </article>
+  <section>
+    <h2>First base</h2>
+    <p class="mark">Shared</p>
+    <div class="base">
+      <article class="tile"><strong>Town Center</strong><span>Trains workers.</span></article>
+      <article class="tile"><strong>Worker</strong><span>Gathers. Builds a Town Center, Barracks, or House.</span></article>
+      <article class="tile"><strong>Barracks</strong><span>Trains infantry.</span></article>
+      <article class="tile"><strong>Infantry</strong><span>The basic soldier. Fights.</span></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>20 seconds to train</h2>
+    <div class="flow">
+      <article class="step"><em>1</em><strong>Town Center</strong><span>trains a worker</span></article>
+      <article class="step"><em>2</em><strong>House</strong><span>+10 population</span></article>
+      <article class="step"><em>3</em><strong>Barracks</strong><span>worker builds it</span></article>
+      <article class="step"><em>4</em><strong>Infantry</strong><span>leaves the barracks</span></article>
+      <article class="step"><em>5</em><strong>Fight</strong><span>infantry attack</span></article>
+      <article class="step"><em>6</em><strong>Another center</strong><span>worker raises one, it trains more workers</span></article>
+    </div>
+  </section>
+
+  <section>
+    <p class="mark">Open choice</p>
+    <div class="sheet">
+      <div class="banner">
+        <h2>Elven armies</h2>
+        <span>Peasants and prisoners do the labor in both.</span>
       </div>
-    </section>
-
-    <section id="economy">
-      <h2>Economy</h2>
-      <p>Four resources. A simple worker gathers all of them.</p>
-      <div class="grid-4">
-        <article class="card"><strong>Wood</strong><span>Cut from trees on the map.</span></article>
-        <article class="card"><strong>Gold</strong><span>Dug from surface deposits.</span></article>
-        <article class="card"><strong>Food</strong><span>Berry bushes, cattle, and hunted animals.</span></article>
-        <article class="card"><strong>Exotic</strong><span>Taken from specialized mines.</span></article>
-      </div>
-    </section>
-
-    <section id="population">
-      <h2>Population</h2>
-      <p>There is no fixed population cap. Houses are what let you keep more workers and soldiers. Each house adds <strong>10</strong> population.</p>
-    </section>
-
-    <section id="base">
-      <h2>The first base</h2>
-      <p class="tag set">Shared by both factions</p>
-      <table>
-        <thead>
-          <tr><th>Piece</th><th>What it does</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Town Center<br><span class="muted">Centru administrativ</span></td><td>A main building. Trains workers.</td></tr>
-          <tr><td>Worker<br><span class="muted">Lucrător</span></td><td>Gathers resources. Builds a Town Center, a Barracks, or a House.</td></tr>
-          <tr><td>Barracks<br><span class="muted">Cazarmă</span></td><td>Trains infantry.</td></tr>
-          <tr><td>House<br><span class="muted">Casă</span></td><td>Adds 10 population.</td></tr>
-          <tr><td>Infantry<br><span class="muted">Infanterist</span></td><td>The basic soldier. Fights enemy units.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section id="production">
-      <h2>Production</h2>
-      <p>Training a unit takes <strong>20 seconds</strong>. The first match loop is short:</p>
-      <ol class="flow">
-        <li><b>1.</b> The Town Center trains a worker.</li>
-        <li><b>2.</b> The worker builds a house, and the population room grows by 10.</li>
-        <li><b>3.</b> The worker builds a barracks.</li>
-        <li><b>4.</b> The barracks trains infantry.</li>
-        <li><b>5.</b> Infantry attack enemy units.</li>
-        <li><b>6.</b> A worker can also raise another Town Center, which trains more workers.</li>
-      </ol>
-    </section>
-
-    <section id="elves">
-      <h2>Elves</h2>
-      <p class="tag">Open choice</p>
-      <p>Elves are the quality faction: stronger starting units, and labor drawn from peasants and prisoners. Which army they are is not chosen yet. These are the two options.</p>
-      <img class="sheet" src="images/elves.png" alt="Elven faction alternatives: Central Provinces Imperial Legion beside the Provincial Elven Empire Army.">
-      <div class="choices">
-        <article class="choice elf">
+      <div class="pair">
+        <article class="choice">
+          <svg class="scene" viewBox="0 0 360 160" role="img" aria-label="Imperial legion: banners, infantry, and a star">
+            <rect width="360" height="160" fill="#e7f1fa"/>
+            <ellipse cx="180" cy="138" rx="150" ry="16" fill="#d5e4f2"/>
+            <g fill="#1b3a5c">
+              <path d="M36 28 h22 v40 l-11 8 l-11-8 z"/><rect x="46" y="22" width="3" height="100"/>
+              <path d="M302 28 h22 v40 l-11 8 l-11-8 z"/><rect x="312" y="22" width="3" height="100"/>
+              <polygon points="180,16 186,30 202,30 189,39 194,54 180,45 166,54 171,39 158,30 174,30"/>
+              <path d="M168 22 a16 10 0 0 1 24 0" fill="none" stroke="#1b3a5c" stroke-width="3"/>
+              <circle cx="112" cy="78" r="9"/><path d="M101 89 h22 l5 34 h-32 z"/><rect x="94" y="98" width="9" height="14"/><rect x="128" y="70" width="3" height="50"/>
+              <circle cx="180" cy="74" r="11"/><path d="M166 88 h28 l7 38 h-42 z"/><rect x="156" y="98" width="11" height="16"/><rect x="200" y="64" width="3" height="58"/>
+              <circle cx="248" cy="78" r="9"/><path d="M237 89 h22 l5 34 h-32 z"/><rect x="230" y="98" width="9" height="14"/><rect x="264" y="70" width="3" height="50"/>
+            </g>
+          </svg>
           <h3>Central Provinces Imperial Legion</h3>
           <ul>
-            <li>Strong infantry. Cavalry scouts and pins.</li>
-            <li>Many upgrades. Units can become the best of their kind.</li>
-            <li>Peasants and prisoners do the labor.</li>
-            <li>Every kind of magic in the game is available.</li>
+            <li><i class="dot"></i><span>Strong infantry. Cavalry scouts and pins.</span></li>
+            <li><i class="dot"></i><span>Many upgrades. Units can become the best of their kind.</span></li>
+            <li><i class="dot"></i><span>Every kind of magic in the game.</span></li>
           </ul>
-          <p class="identity"><strong>Identity.</strong> Elite, disciplined, upgrade-heavy, versatile, with full magical support.</p>
+          <p class="identity"><b>Identity</b>Elite, disciplined, upgrade-heavy, versatile, full magical support.</p>
         </article>
-        <article class="choice elf">
+        <article class="choice">
+          <svg class="scene" viewBox="0 0 360 160" role="img" aria-label="Provincial army: a charging rider, levy infantry, and a tent">
+            <rect width="360" height="160" fill="#e7f1fa"/>
+            <ellipse cx="180" cy="142" rx="150" ry="12" fill="#d5e4f2"/>
+            <g fill="#1b3a5c">
+              <path d="M78 70 C52 62 48 92 74 88" fill="none" stroke="#1b3a5c" stroke-width="6" stroke-linecap="round"/>
+              <path d="M72 118 L82 84 C74 74 90 68 108 66 L146 62 C162 46 176 34 192 32 L220 36 L224 48 L204 52 C186 58 174 70 166 82 L158 90 L170 118 L154 118 L144 90 L122 90 L114 118 L100 118 L108 90 L90 94 L80 118 Z"/>
+              <circle cx="156" cy="42" r="8"/>
+              <path d="M146 50 h18 l4 16 h-26 z"/>
+              <rect x="168" y="34" width="3" height="34" transform="rotate(-55 170 50)"/>
+              <circle cx="248" cy="96" r="7"/><path d="M239 104 h16 l4 22 h-24 z"/><rect x="234" y="108" width="8" height="12"/>
+              <circle cx="286" cy="98" r="7"/><path d="M277 106 h16 l4 20 h-24 z"/><rect x="272" y="110" width="8" height="12"/>
+              <path d="M314 128 l16-42 l16 42 z"/><rect x="328" y="72" width="2" height="16"/><path d="M330 72 h12 v8 h-12 z"/>
+            </g>
+          </svg>
           <h3>Provincial Elven Empire Army</h3>
           <ul>
-            <li>A medieval army: heavy cavalry in front, levy infantry behind.</li>
-            <li>The cavalry is excellent. The infantry is the anvil, and it is weaker.</li>
-            <li>Peasants and prisoners do the labor.</li>
-            <li>Fewer mage types, and the mages they have are less skilled.</li>
-            <li>Peasants can be turned into conscripts: cheap, weak, defensive infantry.</li>
+            <li><i class="dot"></i><span>Excellent heavy cavalry. Levy infantry is the anvil, and it is weaker.</span></li>
+            <li><i class="dot"></i><span>Fewer mage types, and those mages are less skilled.</span></li>
+            <li><i class="dot"></i><span>Peasants become conscripts: cheap, weak, defensive infantry.</span></li>
           </ul>
-          <p class="identity"><strong>Identity.</strong> Cavalry-focused and feudal. Aggressive in the charge, carried by weaker infantry and limited magic.</p>
+          <p class="identity"><b>Identity</b>Feudal cavalry. Aggressive in the charge. Weaker infantry, limited magic.</p>
         </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="humans">
-      <h2>Humans</h2>
-      <p class="tag">Open choice</p>
-      <p>Humans never use magic. They are more numerous, and their technology runs further. Whichever culture is chosen, their society is more centralized and more community-minded than the historical model it comes from.</p>
-      <img class="sheet" src="images/humans.jpg" alt="Human faction alternatives: Industrial Rome beside a Mongol-inspired nomadic army.">
-      <div class="choices">
+  <section>
+    <p class="mark">Open choice</p>
+    <div class="sheet">
+      <div class="banner" style="background:#6e3b1f">
+        <h2>Human cultures</h2>
+        <span>No magic. More centralized and more community-minded than the history they come from.</span>
+      </div>
+      <div class="pair">
         <article class="choice human">
+          <svg class="scene" viewBox="0 0 360 160" role="img" aria-label="Industrial Rome: a fort and a hammer">
+            <rect width="360" height="160" fill="#f8efe6"/>
+            <ellipse cx="180" cy="142" rx="150" ry="12" fill="#f0e0d0"/>
+            <g fill="#6e3b1f">
+              <path fill-rule="evenodd" d="M70 132 V58 H100 V40 H150 V58 H210 V40 H260 V58 H290 V132 Z M158 132 V96 Q180 74 202 96 V132 Z"/>
+              <rect x="108" y="28" width="3" height="16"/><path d="M111 28 h12 v8 h-12 z"/>
+              <rect x="228" y="28" width="3" height="16"/><path d="M231 28 h12 v8 h-12 z"/>
+              <g transform="rotate(-35 250 48)">
+                <rect x="246" y="28" width="8" height="36" rx="2"/>
+                <rect x="228" y="22" width="44" height="12" rx="2"/>
+              </g>
+            </g>
+          </svg>
           <h3>Industrial Rome</h3>
           <ul>
-            <li>Fortifications and fast construction are the focus.</li>
-            <li>Infantry can build fortifications and buildings.</li>
-            <li>Prisoners are used as forced labor.</li>
-            <li>Prisoners can be ransomed for gold.</li>
+            <li><i class="dot"></i><span>Fortifications and fast construction.</span></li>
+            <li><i class="dot"></i><span>Infantry can build forts and buildings.</span></li>
+            <li><i class="dot"></i><span>Prisoners work. Prisoners can be ransomed for gold.</span></li>
           </ul>
-          <p class="identity"><strong>Identity.</strong> Defensive and organized. Expansion comes from construction and control.</p>
+          <p class="identity"><b>Identity</b>Defensive and organized. Expansion by construction and control.</p>
         </article>
         <article class="choice human">
+          <svg class="scene" viewBox="0 0 360 160" role="img" aria-label="Mongol-inspired camp: a running horse and a yurt">
+            <rect width="360" height="160" fill="#f8efe6"/>
+            <ellipse cx="180" cy="140" rx="150" ry="12" fill="#f0e0d0"/>
+            <g fill="#6e3b1f">
+              <path d="M36 86 h22 M36 100 h16 M36 114 h20" stroke="#6e3b1f" stroke-width="5" stroke-linecap="round"/>
+              <path d="M58 78 C40 70 38 96 62 92" fill="none" stroke="#6e3b1f" stroke-width="6" stroke-linecap="round"/>
+              <path d="M60 118 L70 86 C64 76 80 70 98 68 L132 64 C146 50 158 40 172 38 L196 42 L200 52 L184 56 C170 62 160 72 154 82 L148 88 L158 118 L144 118 L136 90 L116 90 L110 118 L96 118 L102 90 L84 94 L76 118 Z"/>
+              <path d="M236 128 Q268 52 316 128 Z"/>
+              <rect x="268" y="96" width="16" height="32" fill="#f8efe6"/>
+              <rect x="274" y="40" width="3" height="20"/><path d="M277 40 h12 v8 h-12 z"/>
+              <path d="M324 96 l14 5 l14-5 l-7 4 l7 4 l-14 5 l-14-5 l7-4 z"/>
+            </g>
+          </svg>
           <h3>Mongol inspired</h3>
           <ul>
-            <li>Buildings can pack up and move. The faction stays mobile.</li>
-            <li>Raiders matter. Enemies can be plundered for resources.</li>
-            <li>Captured enemies can be forced to fight for you, with reduced stats.</li>
-            <li>That capture does not work on mages or on units of magical origin.</li>
+            <li><i class="dot"></i><span>Buildings pack up and move. The army stays mobile.</span></li>
+            <li><i class="dot"></i><span>Raiders plunder enemies for resources.</span></li>
+            <li><i class="dot"></i><span>Captured enemies fight for you at reduced stats. Not mages, and not units of magical origin.</span></li>
           </ul>
-          <p class="identity"><strong>Identity.</strong> Mobile, aggressive, and flexible. The plan is the raid.</p>
+          <p class="identity"><b>Identity</b>Mobile, aggressive, flexible. The plan is the raid.</p>
         </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="veterancy">
-      <h2>Veterancy</h2>
-      <p class="tag">Working rule</p>
-      <p>A unit is not replaced by an identical copy of itself. The soldier who has already fought is a different asset from the recruit who just left the barracks.</p>
-      <div class="grid-2">
-        <article class="card">
-          <strong>Experience stays on that unit</strong>
-          <span>Combat raises the individual. A veteran fights better than a fresh soldier of the same type. Training someone new does not inherit that experience.</span>
-        </article>
-        <article class="card">
-          <strong>Losing one is the cost</strong>
-          <span>Elves feel it first, because they field fewer and stronger troops. Humans can refill a line faster, and a saved veteran is still ahead of the replacement.</span>
-        </article>
-      </div>
-      <p>The rank names and the size of the combat bonus are not fixed yet. The rule is: experience belongs to the body that earned it.</p>
-    </section>
+  <section>
+    <h2>Veterancy</h2>
+    <p class="mark">Working rule</p>
+    <div class="ranks">
+      <article class="rank">
+        <svg class="scene" viewBox="0 0 360 110" aria-hidden="true" style="border-radius:12px;margin-bottom:10px">
+          <rect width="360" height="110" fill="#e7f1fa"/>
+          <g fill="#1b3a5c">
+            <circle cx="70" cy="48" r="10"/><path d="M58 60 h24 l4 30 h-32 z"/>
+            <path d="M150 70 h50" stroke="#1b3a5c" stroke-width="3"/>
+            <path d="M190 62 l10 8 l-10 8" fill="none" stroke="#1b3a5c" stroke-width="3"/>
+            <circle cx="250" cy="46" r="12"/><path d="M234 60 h32 l6 32 h-44 z"/>
+            <polygon points="250,18 253,26 262,26 255,31 257,40 250,35 243,40 245,31 238,26 247,26"/>
+          </g>
+        </svg>
+        <strong>It stays on that body</strong>
+        <span>Fighting makes that soldier better than a fresh one of the same type. A recruit does not inherit it.</span>
+      </article>
+      <article class="rank">
+        <strong>Elves feel the loss first</strong>
+        <span>They field fewer, stronger troops.</span>
+      </article>
+      <article class="rank">
+        <strong>Humans refill faster</strong>
+        <span>A saved veteran is still ahead of the replacement.</span>
+      </article>
+    </div>
+    <p class="note">Rank names and the size of the bonus are not fixed yet.</p>
+  </section>
 
-    <section id="recovery">
-      <h2>Recovery from the field</h2>
-      <p class="tag">Working rule</p>
-      <p>A defeated soldier does not vanish. They fall where they were fighting, and your own side can bring them home. This is your unit coming back. It is separate from taking enemy prisoners, which only some faction options can do.</p>
-      <ol class="flow">
-        <li><b>1.</b> The unit drops on the field instead of being deleted.</li>
-        <li><b>2.</b> A worker carries them back to a Town Center or a Barracks.</li>
-        <li><b>3.</b> They return to the army with the veterancy they already had.</li>
-        <li><b>4.</b> If nobody reaches them, or an enemy finishes them, they are gone and the experience goes with them.</li>
-      </ol>
-      <p>How long a body stays recoverable is not fixed yet. In the first version, workers do the carrying.</p>
-    </section>
+  <section>
+    <h2>Recovery from the field</h2>
+    <p class="mark">Working rule</p>
+    <div class="recover">
+      <article class="beat"><strong>1. Falls</strong><span>A defeated unit drops where it fought. It is not deleted.</span></article>
+      <article class="beat"><strong>2. Carried</strong><span>A worker brings them to a Town Center or a Barracks.</span></article>
+      <article class="beat"><strong>3. Returns</strong><span>They rejoin with the veterancy they already had.</span></article>
+      <article class="beat"><strong>4. Gone</strong><span>If nobody arrives, or an enemy finishes them, the experience goes too.</span></article>
+    </div>
+    <p class="note">How long a body stays recoverable is not fixed. This is your own soldier. Enemy prisoners, ransoms, and forced recruits belong to the faction options.</p>
+  </section>
 
-    <section id="prototype">
-      <h2>What the prototype has to prove</h2>
-      <p>The first playable slice is the shared base, not the faction split and not the later ages.</p>
-      <ul>
-        <li>Train workers.</li>
-        <li>Build houses, town centers, and barracks.</li>
-        <li>Raise the population by building houses.</li>
-        <li>Train infantry.</li>
-        <li>Have those infantry fight enemy units.</li>
-      </ul>
-      <p>Economy, the military roster, and the age track grow from that loop.</p>
-    </section>
-  </main>
+  <section>
+    <h2>Prototype</h2>
+    <div class="prove">
+      <article class="beat"><strong>Train</strong><span>Workers from the Town Center.</span></article>
+      <article class="beat"><strong>Build</strong><span>Houses, town centers, barracks.</span></article>
+      <article class="beat"><strong>Grow</strong><span>Population rises with houses.</span></article>
+      <article class="beat"><strong>Fight</strong><span>Infantry attack enemy units.</span></article>
+    </div>
+    <p class="note">The first slice is this shared base. Factions and later ages come after.</p>
+  </section>
 </div>
-
-<footer class="wrap">
-  <p>Sources: the concept notes, the starting-buildings note, and the two faction sheets. Veterancy and field recovery are included as the rules discussed for units. Bonuses and timers that were never written down are left open.</p>
-</footer>
 </body>
 </html>
