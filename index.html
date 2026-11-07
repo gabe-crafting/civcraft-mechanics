@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Civcraft — mechanics</title>
+<style>
+  :root {
+    --paper: #f4f0e6;
+    --ink: #1b2430;
+    --muted: #5e6872;
+    --line: #d8d0c2;
+    --card: #fffdf8;
+    --elf: #1d4f86;
+    --elf-soft: #e6f0f8;
+    --human: #8a4b22;
+    --human-soft: #f7eee6;
+    --open: #6b5428;
+    --open-soft: #f3ead4;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 18px/1.55 "Segoe UI", Candara, sans-serif;
+  }
+  a { color: inherit; }
+  header.mast {
+    padding: 48px 24px 28px;
+    border-bottom: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, #efe8d8 0%, var(--paper) 100%);
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .kicker {
+    margin: 0 0 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  h1 {
+    margin: 0;
+    font-family: Palatino, "Palatino Linotype", Georgia, serif;
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+  .lede {
+    max-width: 42rem;
+    margin: 16px 0 0;
+    font-size: 20px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 36px;
+    padding: 32px 24px 80px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+  }
+  nav.toc a {
+    text-decoration: none;
+    color: var(--muted);
+    border-left: 2px solid transparent;
+    padding-left: 10px;
+  }
+  nav.toc a:hover { color: var(--ink); border-left-color: var(--ink); }
+  main section { margin: 0 0 48px; }
+  h2 {
+    margin: 0 0 12px;
+    font-family: Palatino, "Palatino Linotype", Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    margin: 0 0 8px;
+    font-family: Palatino, "Palatino Linotype", Georgia, serif;
+    font-size: 22px;
+  }
+  p { margin: 0 0 12px; }
+  .tag {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--open-soft);
+    color: var(--open);
+  }
+  .tag.set { background: #e5efe4; color: #24532a; }
+  .grid-2, .grid-4, .choices {
+    display: grid;
+    gap: 14px;
+  }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .card, .choice {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+  }
+  .card strong, .choice h3 { display: block; }
+  .card span, .muted { color: var(--muted); }
+  ol.flow {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+  ol.flow li {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  ol.flow b { font-family: Palatino, Georgia, serif; margin-right: 8px; }
+  .sheet {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    margin: 0 0 12px;
+    background: white;
+  }
+  .choice.elf { background: var(--elf-soft); }
+  .choice.human { background: var(--human-soft); }
+  .choice ul { margin: 8px 0 0; padding-left: 18px; }
+  .identity {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  footer {
+    padding: 0 24px 40px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 18px; }
+    nav.toc { position: static; flex-direction: row; flex-wrap: wrap; }
+    nav.toc a { border-left: 0; padding: 4px 8px; background: var(--card); border-radius: 999px; border: 1px solid var(--line); }
+    .grid-2, .grid-4, .choices { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <p class="kicker">Civcraft</p>
+    <h1>How the war is fought</h1>
+    <p class="lede">A real-time strategy game in the spirit of Age of Empires. Elves fight with high magic. Humans fight with technology and nothing else. Both gather, build, and train until one side is gone.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="Sections">
+    <a href="#premise">Premise</a>
+    <a href="#ages">Ages</a>
+    <a href="#economy">Economy</a>
+    <a href="#population">Population</a>
+    <a href="#base">First base</a>
+    <a href="#production">Production</a>
+    <a href="#elves">Elves</a>
+    <a href="#humans">Humans</a>
+    <a href="#veterancy">Veterancy</a>
+    <a href="#recovery">Field recovery</a>
+    <a href="#prototype">Prototype</a>
+  </nav>
+
+  <main>
+    <section id="premise">
+      <h2>Premise</h2>
+      <p>Two factions share the same map and the same basic jobs: gather resources, raise buildings, and field an army. They do not share a way of making power.</p>
+      <div class="grid-2">
+        <article class="card">
+          <strong>Elves</strong>
+          <span>High magic. Fewer soldiers, and the ones they have start strong. Later ages add less than they do for humans.</span>
+        </article>
+        <article class="card">
+          <strong>Humans</strong>
+          <span>Technology only. They begin with primitive troops, a larger population, and much steeper jumps in power as the ages pass.</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="ages">
+      <h2>Ages</h2>
+      <p>Both sides advance through ages. An age unlocks units, technologies, and new uses for units that already exist.</p>
+      <div class="grid-2">
+        <article class="card">
+          <strong>Elves</strong>
+          <span>They open in a strong medieval kit. Progress after that is real, but comparatively narrow.</span>
+        </article>
+        <article class="card">
+          <strong>Humans</strong>
+          <span>They climb from primitive tools through Antiquity, the Middle Ages, the premodern and modern eras, the First World War, and the Second World War. Their power spikes are the larger ones.</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="economy">
+      <h2>Economy</h2>
+      <p>Four resources. A simple worker gathers all of them.</p>
+      <div class="grid-4">
+        <article class="card"><strong>Wood</strong><span>Cut from trees on the map.</span></article>
+        <article class="card"><strong>Gold</strong><span>Dug from surface deposits.</span></article>
+        <article class="card"><strong>Food</strong><span>Berry bushes, cattle, and hunted animals.</span></article>
+        <article class="card"><strong>Exotic</strong><span>Taken from specialized mines.</span></article>
+      </div>
+    </section>
+
+    <section id="population">
+      <h2>Population</h2>
+      <p>There is no fixed population cap. Houses are what let you keep more workers and soldiers. Each house adds <strong>10</strong> population.</p>
+    </section>
+
+    <section id="base">
+      <h2>The first base</h2>
+      <p class="tag set">Shared by both factions</p>
+      <table>
+        <thead>
+          <tr><th>Piece</th><th>What it does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Town Center<br><span class="muted">Centru administrativ</span></td><td>A main building. Trains workers.</td></tr>
+          <tr><td>Worker<br><span class="muted">Lucrător</span></td><td>Gathers resources. Builds a Town Center, a Barracks, or a House.</td></tr>
+          <tr><td>Barracks<br><span class="muted">Cazarmă</span></td><td>Trains infantry.</td></tr>
+          <tr><td>House<br><span class="muted">Casă</span></td><td>Adds 10 population.</td></tr>
+          <tr><td>Infantry<br><span class="muted">Infanterist</span></td><td>The basic soldier. Fights enemy units.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="production">
+      <h2>Production</h2>
+      <p>Training a unit takes <strong>20 seconds</strong>. The first match loop is short:</p>
+      <ol class="flow">
+        <li><b>1.</b> The Town Center trains a worker.</li>
+        <li><b>2.</b> The worker builds a house, and the population room grows by 10.</li>
+        <li><b>3.</b> The worker builds a barracks.</li>
+        <li><b>4.</b> The barracks trains infantry.</li>
+        <li><b>5.</b> Infantry attack enemy units.</li>
+        <li><b>6.</b> A worker can also raise another Town Center, which trains more workers.</li>
+      </ol>
+    </section>
+
+    <section id="elves">
+      <h2>Elves</h2>
+      <p class="tag">Open choice</p>
+      <p>Elves are the quality faction: stronger starting units, and labor drawn from peasants and prisoners. Which army they are is not chosen yet. These are the two options.</p>
+      <img class="sheet" src="images/elves.png" alt="Elven faction alternatives: Central Provinces Imperial Legion beside the Provincial Elven Empire Army.">
+      <div class="choices">
+        <article class="choice elf">
+          <h3>Central Provinces Imperial Legion</h3>
+          <ul>
+            <li>Strong infantry. Cavalry scouts and pins.</li>
+            <li>Many upgrades. Units can become the best of their kind.</li>
+            <li>Peasants and prisoners do the labor.</li>
+            <li>Every kind of magic in the game is available.</li>
+          </ul>
+          <p class="identity"><strong>Identity.</strong> Elite, disciplined, upgrade-heavy, versatile, with full magical support.</p>
+        </article>
+        <article class="choice elf">
+          <h3>Provincial Elven Empire Army</h3>
+          <ul>
+            <li>A medieval army: heavy cavalry in front, levy infantry behind.</li>
+            <li>The cavalry is excellent. The infantry is the anvil, and it is weaker.</li>
+            <li>Peasants and prisoners do the labor.</li>
+            <li>Fewer mage types, and the mages they have are less skilled.</li>
+            <li>Peasants can be turned into conscripts: cheap, weak, defensive infantry.</li>
+          </ul>
+          <p class="identity"><strong>Identity.</strong> Cavalry-focused and feudal. Aggressive in the charge, carried by weaker infantry and limited magic.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="humans">
+      <h2>Humans</h2>
+      <p class="tag">Open choice</p>
+      <p>Humans never use magic. They are more numerous, and their technology runs further. Whichever culture is chosen, their society is more centralized and more community-minded than the historical model it comes from.</p>
+      <img class="sheet" src="images/humans.jpg" alt="Human faction alternatives: Industrial Rome beside a Mongol-inspired nomadic army.">
+      <div class="choices">
+        <article class="choice human">
+          <h3>Industrial Rome</h3>
+          <ul>
+            <li>Fortifications and fast construction are the focus.</li>
+            <li>Infantry can build fortifications and buildings.</li>
+            <li>Prisoners are used as forced labor.</li>
+            <li>Prisoners can be ransomed for gold.</li>
+          </ul>
+          <p class="identity"><strong>Identity.</strong> Defensive and organized. Expansion comes from construction and control.</p>
+        </article>
+        <article class="choice human">
+          <h3>Mongol inspired</h3>
+          <ul>
+            <li>Buildings can pack up and move. The faction stays mobile.</li>
+            <li>Raiders matter. Enemies can be plundered for resources.</li>
+            <li>Captured enemies can be forced to fight for you, with reduced stats.</li>
+            <li>That capture does not work on mages or on units of magical origin.</li>
+          </ul>
+          <p class="identity"><strong>Identity.</strong> Mobile, aggressive, and flexible. The plan is the raid.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="veterancy">
+      <h2>Veterancy</h2>
+      <p class="tag">Working rule</p>
+      <p>A unit is not replaced by an identical copy of itself. The soldier who has already fought is a different asset from the recruit who just left the barracks.</p>
+      <div class="grid-2">
+        <article class="card">
+          <strong>Experience stays on that unit</strong>
+          <span>Combat raises the individual. A veteran fights better than a fresh soldier of the same type. Training someone new does not inherit that experience.</span>
+        </article>
+        <article class="card">
+          <strong>Losing one is the cost</strong>
+          <span>Elves feel it first, because they field fewer and stronger troops. Humans can refill a line faster, and a saved veteran is still ahead of the replacement.</span>
+        </article>
+      </div>
+      <p>The rank names and the size of the combat bonus are not fixed yet. The rule is: experience belongs to the body that earned it.</p>
+    </section>
+
+    <section id="recovery">
+      <h2>Recovery from the field</h2>
+      <p class="tag">Working rule</p>
+      <p>A defeated soldier does not vanish. They fall where they were fighting, and your own side can bring them home. This is your unit coming back. It is separate from taking enemy prisoners, which only some faction options can do.</p>
+      <ol class="flow">
+        <li><b>1.</b> The unit drops on the field instead of being deleted.</li>
+        <li><b>2.</b> A worker carries them back to a Town Center or a Barracks.</li>
+        <li><b>3.</b> They return to the army with the veterancy they already had.</li>
+        <li><b>4.</b> If nobody reaches them, or an enemy finishes them, they are gone and the experience goes with them.</li>
+      </ol>
+      <p>How long a body stays recoverable is not fixed yet. In the first version, workers do the carrying.</p>
+    </section>
+
+    <section id="prototype">
+      <h2>What the prototype has to prove</h2>
+      <p>The first playable slice is the shared base, not the faction split and not the later ages.</p>
+      <ul>
+        <li>Train workers.</li>
+        <li>Build houses, town centers, and barracks.</li>
+        <li>Raise the population by building houses.</li>
+        <li>Train infantry.</li>
+        <li>Have those infantry fight enemy units.</li>
+      </ul>
+      <p>Economy, the military roster, and the age track grow from that loop.</p>
+    </section>
+  </main>
+</div>
+
+<footer class="wrap">
+  <p>Sources: the concept notes, the starting-buildings note, and the two faction sheets. Veterancy and field recovery are included as the rules discussed for units. Bonuses and timers that were never written down are left open.</p>
+</footer>
+</body>
+</html>
