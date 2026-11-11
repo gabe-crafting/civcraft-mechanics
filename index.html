@@ -20,18 +20,18 @@
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font: 16px/1.4 "Segoe UI", Candara, sans-serif;
+    font: 22px/1.45 "Segoe UI", Candara, sans-serif;
   }
   .wrap { max-width: none; margin: 0 auto; padding: 24px clamp(16px, 2vw, 36px) 72px; }
   header.top { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 22px; }
-  .kicker { margin: 0 0 6px; letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
-  h1 { margin: 0; font-family: Palatino, "Palatino Linotype", Georgia, serif; font-size: clamp(36px, 5vw, 56px); line-height: 0.92; font-weight: 600; }
-  header.top p { margin: 0; max-width: 280px; color: var(--muted); }
-  h2 { margin: 0 0 12px; font-family: Palatino, Georgia, serif; font-size: 28px; font-weight: 600; }
+  .kicker { margin: 0 0 6px; letter-spacing: 0.16em; text-transform: uppercase; font-size: 14px; color: var(--muted); }
+  h1 { margin: 0; font-family: Palatino, "Palatino Linotype", Georgia, serif; font-size: clamp(48px, 6vw, 76px); line-height: 0.92; font-weight: 600; }
+  header.top p { margin: 0; max-width: 420px; color: var(--muted); }
+  h2 { margin: 0 0 12px; font-family: Palatino, Georgia, serif; font-size: 40px; font-weight: 600; }
   section { margin-top: 34px; }
   .mark {
     display: inline-block; margin: 0 0 8px; padding: 2px 8px; border-radius: 999px;
-    background: #f3ead4; color: #6b5428; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    background: #f3ead4; color: #6b5428; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase;
   }
   .poles, .tracks, .resources, .base, .flow, .pair, .ranks, .recover, .prove { display: grid; gap: 14px; }
   .poles, .tracks, .pair { grid-template-columns: 1fr 1fr; }
@@ -48,11 +48,12 @@
   .tile, .step, .beat { padding: 12px; }
   .rank { padding: 0 0 14px; }
   .rank strong, .rank span { margin-left: 14px; margin-right: 14px; }
-  .tile span, .step span, .rank span, .beat span, .fine { color: var(--muted); font-size: 14px; }
-  img.scene { display: block; width: 100%; height: 72vh; min-height: 420px; object-fit: cover; object-position: center; }
-  img.icon { width: calc(100% + 24px); height: 28vh; min-height: 160px; object-fit: cover; display: block; margin: -12px -12px 12px; max-width: none; }
+  .tile strong, .step strong, .rank strong, .beat strong { font-size: 24px; }
+  .tile span, .step span, .rank span, .beat span, .fine { color: var(--muted); font-size: 20px; }
+  img.scene { display: block; width: 100%; height: 220px; object-fit: cover; object-position: center; }
+  img.icon { width: calc(100% + 24px); height: 120px; object-fit: cover; display: block; margin: -12px -12px 12px; max-width: none; }
   .house-row { display: flex; gap: 8px; margin-bottom: 8px; }
-  .house-row img.icon { width: 140px; height: 140px; min-height: 0; margin: 0; border-radius: 12px; }
+  .house-row img.icon { width: 88px; height: 88px; min-height: 0; margin: 0; border-radius: 12px; }
   .rank img.scene { margin-bottom: 12px; }
   .sheet { border: 2px solid var(--navy); border-radius: 18px; padding: 14px; background: #f7fbfe; }
   .sheet.human { border-color: #6e3b1f; }
@@ -61,23 +62,23 @@
     display: flex; justify-content: space-between; gap: 12px; align-items: center;
   }
   .sheet.human > .banner { background: #6e3b1f; }
-  .sheet > .banner h2 { margin: 0; color: white; font-size: 26px; }
-  .choice h3 { margin: 10px 14px 0; font-family: Palatino, Georgia, serif; font-size: 22px; }
+  .sheet > .banner h2 { margin: 0; color: white; font-size: 36px; }
+  .choice h3 { margin: 10px 14px 0; font-family: Palatino, Georgia, serif; font-size: 32px; }
   .choice ul { margin: 8px 0 0; padding: 0 14px; list-style: none; display: grid; gap: 6px; }
-  .choice li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; font-size: 14px; }
+  .choice li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; font-size: 20px; }
   .dot { width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; background: var(--navy); }
   .human .dot { background: var(--human); }
-  .identity { margin: 12px; padding: 10px 12px; border-radius: 12px; background: #dceafa; font-size: 14px; }
+  .identity { margin: 12px; padding: 10px 12px; border-radius: 12px; background: #dceafa; font-size: 20px; }
   .choice.human .identity { background: #f4e4d4; }
-  .identity b { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .identity b { display: block; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
   .step { text-align: center; position: relative; }
-  .step em { display: block; font-style: normal; font-family: Palatino, Georgia, serif; font-size: 20px; color: var(--navy); }
-  .note { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+  .step em { display: block; font-style: normal; font-family: Palatino, Georgia, serif; font-size: 28px; color: var(--navy); }
+  .note { margin: 10px 0 0; color: var(--muted); font-size: 20px; }
   .elf-ages { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
   .elf-ages b { background: var(--navy); color: white; border-radius: 999px; padding: 6px 12px; }
   .elf-ages i { width: 10px; height: 10px; border-radius: 50%; background: #9bb4cc; display: block; }
   .spikes { list-style: none; margin: 10px 0; padding: 0; display: grid; gap: 5px; }
-  .spikes li { display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: center; font-size: 13px; }
+  .spikes li { display: grid; grid-template-columns: 130px 1fr; gap: 8px; align-items: center; font-size: 20px; }
   .spikes li::after { content: ""; height: 10px; width: var(--h); background: #6e3b1f; border-radius: 999px; }
   @media (max-width: 860px) {
     .wrap { padding: 16px 0 48px; }
@@ -88,8 +89,8 @@
     .panel, .tile, .step, .choice, .rank, .beat, .sheet { border-radius: 0; }
     .sheet { margin-left: 0; margin-right: 0; padding: 0 0 16px; }
     .sheet > .banner { margin: 0 0 14px; }
-    img.scene { height: 78vh; min-height: 320px; }
-    img.icon { height: 42vh; }
+    img.scene { height: 180px; }
+    img.icon { height: 110px; }
     .sheet > .banner { flex-wrap: wrap; }
   }
 </style>
