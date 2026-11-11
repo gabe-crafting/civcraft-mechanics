@@ -50,10 +50,10 @@
   .rank strong, .rank span { margin-left: 14px; margin-right: 14px; }
   .tile strong, .step strong, .rank strong, .beat strong { font-size: 24px; }
   .tile span, .step span, .rank span, .beat span, .fine { color: var(--muted); font-size: 20px; }
-  img.scene { display: block; width: 100%; height: 220px; object-fit: cover; object-position: center; }
-  img.icon { width: calc(100% + 24px); height: 120px; object-fit: cover; display: block; margin: -12px -12px 12px; max-width: none; }
+  img.scene { display: block; width: 100%; height: auto; object-fit: contain; }
+  img.icon { width: calc(100% + 24px); height: auto; object-fit: contain; display: block; margin: -12px -12px 12px; max-width: none; }
   .house-row { display: flex; gap: 8px; margin-bottom: 8px; }
-  .house-row img.icon { width: 88px; height: 88px; min-height: 0; margin: 0; border-radius: 12px; }
+  .house-row img.icon { width: 88px; height: auto; margin: 0; border-radius: 12px; }
   .rank img.scene { margin-bottom: 12px; }
   .sheet { border: 2px solid var(--navy); border-radius: 18px; padding: 14px; background: #f7fbfe; }
   .sheet.human { border-color: #6e3b1f; }
@@ -89,8 +89,7 @@
     .panel, .tile, .step, .choice, .rank, .beat, .sheet { border-radius: 0; }
     .sheet { margin-left: 0; margin-right: 0; padding: 0 0 16px; }
     .sheet > .banner { margin: 0 0 14px; }
-    img.scene { height: 180px; }
-    img.icon { height: 110px; }
+    img.scene, img.icon { height: auto; }
     .sheet > .banner { flex-wrap: wrap; }
   }
 </style>
