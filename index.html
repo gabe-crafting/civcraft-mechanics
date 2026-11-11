@@ -22,7 +22,7 @@
     color: var(--ink);
     font: 16px/1.4 "Segoe UI", Candara, sans-serif;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 64px; }
+  .wrap { max-width: none; margin: 0 auto; padding: 24px clamp(16px, 2vw, 36px) 72px; }
   header.top { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 22px; }
   .kicker { margin: 0 0 6px; letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
   h1 { margin: 0; font-family: Palatino, "Palatino Linotype", Georgia, serif; font-size: clamp(36px, 5vw, 56px); line-height: 0.92; font-weight: 600; }
@@ -45,14 +45,15 @@
   .panel { padding: 0 0 14px; }
   .panel header, .choice header { padding: 12px 14px 0; }
   .panel h2, .choice h3, .tile strong, .step strong, .rank strong, .beat strong { display: block; }
-  .tile, .step, .rank, .beat { padding: 12px; }
+  .tile, .step, .beat { padding: 12px; }
+  .rank { padding: 0 0 14px; }
+  .rank strong, .rank span { margin-left: 14px; margin-right: 14px; }
   .tile span, .step span, .rank span, .beat span, .fine { color: var(--muted); font-size: 14px; }
-  img.scene { display: block; width: 100%; height: 210px; object-fit: cover; object-position: center; }
-  .panel img.scene { height: 230px; }
-  img.icon { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; display: block; margin-bottom: 8px; }
+  img.scene { display: block; width: 100%; height: 72vh; min-height: 420px; object-fit: cover; object-position: center; }
+  img.icon { width: calc(100% + 24px); height: 28vh; min-height: 160px; object-fit: cover; display: block; margin: -12px -12px 12px; max-width: none; }
   .house-row { display: flex; gap: 8px; margin-bottom: 8px; }
-  .house-row img.icon { margin-bottom: 0; }
-  .rank img.scene { height: 160px; border-radius: 12px; margin-bottom: 10px; }
+  .house-row img.icon { width: 140px; height: 140px; min-height: 0; margin: 0; border-radius: 12px; }
+  .rank img.scene { margin-bottom: 12px; }
   .sheet { border: 2px solid var(--navy); border-radius: 18px; padding: 14px; background: #f7fbfe; }
   .sheet.human { border-color: #6e3b1f; }
   .sheet > .banner {
@@ -79,14 +80,16 @@
   .spikes li { display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: center; font-size: 13px; }
   .spikes li::after { content: ""; height: 10px; width: var(--h); background: #6e3b1f; border-radius: 999px; }
   @media (max-width: 860px) {
+    .wrap { padding: 16px 0 48px; }
+    header.top, section > h2, section > .mark, section > .note { margin-left: 16px; margin-right: 16px; }
     header.top { display: block; }
-    header.top p { margin-top: 10px; }
-    .poles, .tracks, .pair, .ranks, .resources, .base, .flow, .recover, .prove { grid-template-columns: 1fr 1fr; }
-    .flow { grid-template-columns: 1fr 1fr 1fr; }
-    img.scene, .panel img.scene { height: 180px; }
-  }
-  @media (max-width: 560px) {
-    .resources, .base, .recover, .prove, .ranks, .pair, .poles, .tracks, .flow { grid-template-columns: 1fr; }
+    header.top p { margin-top: 10px; max-width: none; }
+    .poles, .tracks, .pair, .ranks, .resources, .base, .flow, .recover, .prove { grid-template-columns: 1fr; }
+    .panel, .tile, .step, .choice, .rank, .beat, .sheet { border-radius: 0; }
+    .sheet { margin-left: 0; margin-right: 0; padding: 0 0 16px; }
+    .sheet > .banner { margin: 0 0 14px; }
+    img.scene { height: 78vh; min-height: 320px; }
+    img.icon { height: 42vh; }
     .sheet > .banner { flex-wrap: wrap; }
   }
 </style>
